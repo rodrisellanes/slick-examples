@@ -6,7 +6,7 @@ import mySlickApp._
 /**
   * Created by rdsel on 30/10/2016.
   */
-object insertStandardData {
+object testDataSet {
 
     val insertData = DBIO.seq(
 

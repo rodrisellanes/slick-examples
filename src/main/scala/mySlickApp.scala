@@ -1,10 +1,8 @@
 package db
 
-import controller.Item
+import model.Item
 import slick.driver.MySQLDriver.api._
-
 import scala.concurrent.{Await, Future}
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration
 import scala.util.{Failure, Success}
 import scala.io.StdIn._
@@ -12,6 +10,7 @@ import scala.io.StdIn._
 /**
   * Created by rdsel on 15/10/2016.
   */
+
 object mySlickApp extends App with DAO {
 
   //DataBase get configuration
@@ -22,12 +21,10 @@ object mySlickApp extends App with DAO {
     db.run(schema)
   }
   // Create DB Schema
-  createTablesIfNotExist
+  if(false) createTablesIfNotExist
   // Insert Standard Data (Categories, Users & Branches)
-//  insertStandardData
+  if(false) testDataSet
 
-//    db.run(items.filter(_.price < 100).delete)
-  //  db.run(DBIO.seq((items.schema ++ categories.schema ++ branches.schema ++ users.schema).drop))
 
   println("Ingrese el Articulo nuevo")
   val itemName = readLine("Nombre articulo: ")
@@ -38,9 +35,9 @@ object mySlickApp extends App with DAO {
   print("Usuario asignado: ")
   val itemUsrAssigned = readInt()
 
-  val it = new Item(itemName, itemPrice, itemCategory, itemUsrAssigned)
+  Items.insert(Item(0, 2016, itemName, itemPrice, itemCategory, itemUsrAssigned))
+  Items.delete(1)
 
-  println(it.toString)
 
   val innerJoin = for {
     (c, s) <- users join branches on (_.branch === _.id)
@@ -54,16 +51,6 @@ object mySlickApp extends App with DAO {
     case Success(s) => s.toList foreach(x => println(x._1 + " -> " + x._2))
     case Failure(f) => println(s"An error has occurred: $f")
   }
-
-
-
-//
-//  // Materialized
-//  val q = for { c <- categories } yield c.*
-//  val a1 = q.result
-//  val f1: Future[Seq[(Int, String)]] = db.run(a1)
-//
-//  f1.onComplete { s => println(s"Result: $s") }
 
   // Close DB Configuration
   db.close
