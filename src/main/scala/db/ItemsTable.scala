@@ -1,8 +1,9 @@
 package db
 
 import model.Item
-import mySlickApp.db
 import slick.driver.MySQLDriver.api._
+import scala.concurrent.duration.Duration
+import scala.concurrent.{Await, Future}
 
 
 /**
@@ -31,21 +32,42 @@ class ItemsTable(tag: Tag) extends Table[Item](tag, "ITEMS") {
 object Items extends DAO {
 
   def insert(item: Item) = {
-    val insertion = DBIO.seq(items += item)
+    val insertion = DBIO.seq(Items += item)
     db.run(insertion)
   }
 
-  def update(item: Item) = ???
+  def updateById(id: Long, item: Item) =
+    db.run(Items.filter(_.id === id).update(item))
 
-  def delete(id: Int) = {
-    db.run(items.filter(_.id === id).delete)
+  def deleteById(id: Long) = {
+    db.run(Items.filter(_.id === id).delete)
   }
-  //    db.run(items.filter(_.price < 100).delete)
 
-  def selectAll() = ???
+  def selectAll = {
 
-  def selectById(id: Int): Option[Item]  = {
-    items.filter(_.id === id).take(1).result.map(_.headOption)
+    val q = Items.map(_.id)
+    val action = q.result
+    val f: Future[Seq[Long]] =db.run(action)
+    val result = Await.ready(f, Duration.Inf).value.get
+//
+    println(result)
+
+    //  val innerJoin = for {
+    //    (c, s) <- Users join Branches on (_.branch === _.id)
+    //  } yield (c.fullName, s.branchName)
+    //
+    //  val a = innerJoin.result
+    //  val f: Future[Seq[(String, String)]] = db.run(a)
+    //  val result = Await.ready(f, Duration.Inf).value.get
+    //
+    //  result match {
+    //    case Success(s) => s.toList foreach(x => println(x._1 + " -> " + x._2))
+    //    case Failure(f) => println(s"An error has occurred: $f")
+    //  }
+  }
+
+  def selectById(id: Long) = {
+    Items.filter(_.id === id).map(_)
   }
 
 

@@ -1,30 +1,15 @@
-package db
-
+import db.Items
 import model.Item
-import slick.driver.MySQLDriver.api._
-import scala.concurrent.{Await, Future}
+
+import scala.concurrent.Await
 import scala.concurrent.duration.Duration
-import scala.util.{Failure, Success}
 import scala.io.StdIn._
 
 /**
   * Created by rdsel on 15/10/2016.
   */
 
-object mySlickApp extends App with DAO {
-
-  //DataBase get configuration
-  val db = Database.forConfig("mysqldb")
-
-  def createTablesIfNotExist = {
-    val schema = DBIO.seq((items.schema ++ categories.schema ++ branches.schema ++ users.schema).create)
-    db.run(schema)
-  }
-  // Create DB Schema
-  if(false) createTablesIfNotExist
-  // Insert Standard Data (Categories, Users & Branches)
-  if(false) testDataSet
-
+object mySlickApp extends App {
 
   println("Ingrese el Articulo nuevo")
   val itemName = readLine("Nombre articulo: ")
@@ -35,23 +20,17 @@ object mySlickApp extends App with DAO {
   print("Usuario asignado: ")
   val itemUsrAssigned = readInt()
 
+
+
+  // Create a new item
   Items.insert(Item(0, 2016, itemName, itemPrice, itemCategory, itemUsrAssigned))
-  Items.delete(1)
+
+  // Delete item
+  Await.ready(Items.deleteById(4), Duration.Inf).value.get
+
+  // Update item
+  val item1 = Item(0, 2015, "Mouse Genius", 90, 1, 4)
+  Await.ready(Items.updateById(5, item1), Duration.Inf).value.get
 
 
-  val innerJoin = for {
-    (c, s) <- users join branches on (_.branch === _.id)
-  } yield (c.fullName, s.branchName)
-
-  val a = innerJoin.result
-  val f: Future[Seq[(String, String)]] = db.run(a)
-  val result = Await.ready(f, Duration.Inf).value.get
-
-  result match {
-    case Success(s) => s.toList foreach(x => println(x._1 + " -> " + x._2))
-    case Failure(f) => println(s"An error has occurred: $f")
-  }
-
-  // Close DB Configuration
-  db.close
 }
