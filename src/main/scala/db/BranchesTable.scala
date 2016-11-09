@@ -16,10 +16,27 @@ class BranchesTable(tag: Tag) extends Table[Branch](tag, "BRANCHES") {
 
 object Branches extends DAO {
 
-  def insert = ???
+  def insert(branch: Branch) = {
+    createTablesIfNotExist
+    val insertion = DBIO.seq(Branches += branch)
+    db.run(insertion)
+  }
 
-  def update = ???
+  def update(id: Long, branch: Branch) =
+    db.run(Branches.filter(_.id === id).update(branch))
 
-  def delete = ???
+  def delete(id: Long) =
+    db.run(Branches.filter(_.id === id).delete)
+
+  def selectAll = {
+    val query = Branches
+    db.run(query.result)
+  }
+
+  def selectById(id: Long) = {
+    val query = Branches.filter(_.id === id)
+    db.run(query.result)
+  }
+
 
 }

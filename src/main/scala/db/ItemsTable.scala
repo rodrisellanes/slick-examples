@@ -12,7 +12,7 @@ import scala.concurrent.{Await, Future}
 class ItemsTable(tag: Tag) extends Table[Item](tag, "ITEMS") {
 
   def id = column[Long]("ITEM_ID", O.PrimaryKey, O.AutoInc)
-  def date = column[Int]("DATE")
+  def date = column[String]("DATE")
   def name = column[String]("ITEM")
   def price = column[Double]("PRICE")
   def category = column[Int]("CATEGORY")
@@ -32,6 +32,7 @@ class ItemsTable(tag: Tag) extends Table[Item](tag, "ITEMS") {
 object Items extends DAO {
 
   def insert(item: Item) = {
+    createTablesIfNotExist
     val insertion = DBIO.seq(Items += item)
     db.run(insertion)
   }
@@ -43,14 +44,14 @@ object Items extends DAO {
     db.run(Items.filter(_.id === id).delete)
   }
 
-  def selectAll = {
+  def selectById(id: Long) = {
+    val query = Items.filter(_.id === id)
+    db.run(query.result)
+  }
 
-    val q = Items.map(_.id)
-    val action = q.result
-    val f: Future[Seq[Long]] =db.run(action)
-    val result = Await.ready(f, Duration.Inf).value.get
-//
-    println(result)
+  def selectAll = {
+    val query = Items
+    db.run(query.result)
 
     //  val innerJoin = for {
     //    (c, s) <- Users join Branches on (_.branch === _.id)
@@ -64,10 +65,6 @@ object Items extends DAO {
     //    case Success(s) => s.toList foreach(x => println(x._1 + " -> " + x._2))
     //    case Failure(f) => println(s"An error has occurred: $f")
     //  }
-  }
-
-  def selectById(id: Long) = {
-    Items.filter(_.id === id).map(_)
   }
 
 
