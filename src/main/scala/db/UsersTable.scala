@@ -2,7 +2,6 @@ package db
 
 import model.User
 import slick.driver.MySQLDriver.api._
-
 import scala.concurrent.Future
 
 /**

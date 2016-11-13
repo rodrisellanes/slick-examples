@@ -1,6 +1,6 @@
 import db.Items
-import model.Item
 
+import db.DBProperties.init
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 import scala.io.StdIn._
@@ -12,14 +12,14 @@ import scala.util.{Failure, Success}
 
 object mySlickApp extends App {
 
-  println("Ingrese el Articulo nuevo")
-  val itemName = readLine("Nombre articulo: ")
-  print("Precio de compra: ")
-  val itemPrice = readInt()
-  print("Categoria: ")
-  val itemCategory = readInt()
-  print("Usuario asignado: ")
-  val itemUsrAssigned = readInt()
+//  println("Ingrese el Articulo nuevo")
+//  val itemName = readLine("Nombre articulo: ")
+//  print("Precio de compra: ")
+//  val itemPrice = readInt()
+//  print("Categoria: ")
+//  val itemCategory = readInt()
+//  print("Usuario asignado: ")
+//  val itemUsrAssigned = readInt()
 
 
 

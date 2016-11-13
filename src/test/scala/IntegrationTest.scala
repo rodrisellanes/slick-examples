@@ -1,7 +1,7 @@
-import db.{Branches, Categories, Items, Users}
+import db._
+
 import model.{Branch, Category, Item, User}
 import org.scalatest.FunSuite
-
 import scala.concurrent.Await
 
 /**
@@ -36,10 +36,10 @@ class CategoryIntegrationTest extends FunSuite with DataBaseSetUp {
     val userToInsert = User(0, "User Test", anyBranch.id)
     val resultId = Await.result(Users.insert(userToInsert), databaseSessionTimeout)
 
-    val userCpoy = userToInsert.copy(resultId)
+    val userCopy = userToInsert.copy(id = resultId)
     val userFound: User = Await.result(Users.findById(resultId), databaseSessionTimeout).head
 
-    assert(userFound == userCpoy)
+    assert(userFound == userCopy)
   }
 
   test("Inserting a item in the database") {
@@ -52,6 +52,35 @@ class CategoryIntegrationTest extends FunSuite with DataBaseSetUp {
     val itemFound = Await.result(Items.findById(resultId), databaseSessionTimeout).head
 
     assert(itemFound == itemCopy)
+  }
+
+  test("Updating an item in the database") {
+
+    val anyItem = Await.result(Items.selectAll, databaseSessionTimeout).head
+    val itemToUpdate: Item = anyItem.copy(name = "PC Lenovo")
+    Await.result(Items.update(anyItem.id, itemToUpdate), databaseSessionTimeout)
+
+    val itemFound = Await.result(Items.findById(anyItem.id), databaseSessionTimeout).head
+
+    assert(itemFound == itemToUpdate)
+  }
+
+  test("Updating a user in the database") {
+    val anyUser = Await.result(Users.selectAll, databaseSessionTimeout).head
+    val userToUpdate: User = anyUser.copy(fullName = "User Test Updated")
+    Await.result(Users.update(anyUser.id, userToUpdate), databaseSessionTimeout)
+
+    val userFound = Await.result(Users.findById(anyUser.id), databaseSessionTimeout).head
+
+    assert(userFound == userToUpdate)
+  }
+
+  test("Deleting an item from the database") {
+
+    val anyItem = Await.result(Items.selectAll, databaseSessionTimeout).head
+    val itemToDelete = Await.result(Items.delete(anyItem.id), databaseSessionTimeout)
+    val itemDeletedFound = Await.result(Items.findById(itemToDelete), databaseSessionTimeout).head
+    assert(itemDeletedFound != List())
   }
 
 }
