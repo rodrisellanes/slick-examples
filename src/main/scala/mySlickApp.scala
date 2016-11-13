@@ -25,7 +25,7 @@ object mySlickApp extends App {
 
   // Create a new item
 //  val newItem = Items.insert(Item(0, "8/11/2016", itemName, itemPrice, itemCategory, itemUsrAssigned))
-//  Await.ready(newItem, Duration.Inf).value.get
+//  Await.ready(newItem, Duration.Inf)
 
   // Delete item
 //  Await.ready(Items.deleteById(0), Duration.Inf).value.get
@@ -34,7 +34,7 @@ object mySlickApp extends App {
 //  val item1 = Item (5, "11/10/2015", "Mouse Genius", 90, 1, 4)
 //  Await.ready(Items.updateById(0, item1), Duration.Inf).value.get
 
-0  // Report item by ID
+  // Report item by ID
 //  val result = Await.ready(Items.selectById(6), Duration.Inf).value.get
 //  println("result: " + result)
 

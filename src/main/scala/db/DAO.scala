@@ -19,4 +19,5 @@ private[db] trait DAO {
     val schemas = DBIO.seq((Items.schema ++ Categories.schema ++ Branches.schema ++ Users.schema).create)
     db.run(schemas)
   }
+
 }

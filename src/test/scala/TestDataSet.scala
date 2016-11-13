@@ -1,11 +1,20 @@
 //import db._
-//import model.Branch
-//import slick.driver.MySQLDriver.api._
+//import model.Category
 //
 ///**
 //  * Created by rdsel on 30/10/2016.
 //  */
 //object testDataSet {
+//
+//  // Here we will place our fixture
+//
+//
+//   Create data set
+//  Categories.insert(Category(0, "Hardware"))
+//  Categories.insert(Category(0, "Software"))
+//  Categories.insert(Category(0, "Services"))
+//
+//
 //
 //  val insertData = DBIO.seq(
 //
@@ -13,8 +22,8 @@
 //      (0, "Hardware"),
 //      (0, "Software"),
 //      (0, "Services")
-//    ),
-//
+//    )
+////
 //    Branches ++= Seq(
 //      Branch(0, "Administracion Rural (PM)"),
 //      Branch(0, "Centro de Genetica"),

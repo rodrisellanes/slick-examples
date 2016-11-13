@@ -2,9 +2,6 @@ package db
 
 import model.Item
 import slick.driver.MySQLDriver.api._
-import scala.concurrent.duration.Duration
-import scala.concurrent.{Await, Future}
-
 
 /**
   * Created by rdsel on 21/10/2016.
@@ -15,8 +12,8 @@ class ItemsTable(tag: Tag) extends Table[Item](tag, "ITEMS") {
   def date = column[String]("DATE")
   def name = column[String]("ITEM")
   def price = column[Double]("PRICE")
-  def category = column[Int]("CATEGORY")
-  def userAssigned = column[Int]("USER_ASSIGNED")
+  def category = column[Long]("CATEGORY")
+  def userAssigned = column[Long]("USER_ASSIGNED")
 
   def * = (id, date, name, price, category, userAssigned) <> (Item.tupled, Item.unapply)
 
@@ -32,26 +29,21 @@ class ItemsTable(tag: Tag) extends Table[Item](tag, "ITEMS") {
 object Items extends DAO {
 
   def insert(item: Item) = {
-    createTablesIfNotExist
-    val insertion = DBIO.seq(Items += item)
+    val insertion = Items returning Items.map(_.id) += item
     db.run(insertion)
   }
 
-  def updateById(id: Long, item: Item) =
+  def update(id: Long, item: Item) =
     db.run(Items.filter(_.id === id).update(item))
 
-  def deleteById(id: Long) = {
+  def delete(id: Long) =
     db.run(Items.filter(_.id === id).delete)
-  }
 
-  def selectById(id: Long) = {
-    val query = Items.filter(_.id === id)
-    db.run(query.result)
-  }
+  def findById(id: Long) =
+    db.run(Items.filter(_.id === id).result.headOption)
 
-  def selectAll = {
-    val query = Items
-    db.run(query.result)
+  def selectAll =
+    db.run(Items.result)
 
     //  val innerJoin = for {
     //    (c, s) <- Users join Branches on (_.branch === _.id)
@@ -65,7 +57,6 @@ object Items extends DAO {
     //    case Success(s) => s.toList foreach(x => println(x._1 + " -> " + x._2))
     //    case Failure(f) => println(s"An error has occurred: $f")
     //  }
-  }
 
 
 }
