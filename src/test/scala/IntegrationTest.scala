@@ -55,7 +55,6 @@ class CategoryIntegrationTest extends FunSuite with DataBaseSetUp {
   }
 
   test("Updating an item in the database") {
-
     val anyItem = Await.result(Items.selectAll, databaseSessionTimeout).head
     val itemToUpdate: Item = anyItem.copy(name = "PC Lenovo")
     Await.result(Items.update(anyItem.id, itemToUpdate), databaseSessionTimeout)
@@ -76,11 +75,24 @@ class CategoryIntegrationTest extends FunSuite with DataBaseSetUp {
   }
 
   test("Deleting an item from the database") {
-
     val anyItem = Await.result(Items.selectAll, databaseSessionTimeout).head
     val itemToDelete = Await.result(Items.delete(anyItem.id), databaseSessionTimeout)
-    val itemDeletedFound = Await.result(Items.findById(itemToDelete), databaseSessionTimeout).head
-    assert(itemDeletedFound != List())
+    val itemDeletedFound = Await.result(Items.findById(itemToDelete), databaseSessionTimeout)
+
+    assert(itemDeletedFound match {
+      case Some(s) => false
+      case None => true
+    })
+  }
+
+  test("On a emtpy Items table, insert 2 items and then select it all") {
+    val itemsToInsert = List(Item(0, "13/11/2016", "PC Mac", 20000, 133, 1), Item(0, "24/03/2016", "Display 19'", 2900, 2, 1))
+    itemsToInsert map(item => Items.insert(item))
+
+    val allItems = Await.result(Items.selectAll, databaseSessionTimeout)
+    allItems.foreach(println)
+
+    assert(itemsToInsert.length == allItems.length)
   }
 
 }
