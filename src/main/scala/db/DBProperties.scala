@@ -19,7 +19,7 @@ object DBProperties {
   private val usersTable = Users.Users
   private val itemsTable = Items.Items
 
-  private val schemas = itemsTable.schema ++ categoryTable.schema ++  usersTable.schema ++ branchesTable.schema
+  private val schemas = itemsTable.schema ++ usersTable.schema ++ categoryTable.schema  ++ branchesTable.schema
 
   private def createAllTables =
     dbConnection.run(DBIO.seq(schemas.create))

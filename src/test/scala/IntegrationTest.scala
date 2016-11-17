@@ -85,7 +85,7 @@ class CategoryIntegrationTest extends FunSuite with DataBaseSetUp {
     })
   }
 
-  test("On a emtpy Items table, insert 2 items and then select it all") {
+  test("On a empty Items table, insert 2 items and then select it all") {
     val itemsToInsert = List(Item(0, "13/11/2016", "PC Mac", 20000, 133, 1), Item(0, "24/03/2016", "Display 19'", 2900, 2, 1))
     itemsToInsert map(item => Items.insert(item))
 
